@@ -1,0 +1,28 @@
+site_name: Piteau
+site_description: Python Asynchronous Chat
+site_author: Gabriel Oger
+
+repo_name: cimourdain/piteau
+repo_url: https://github.com/cimourdain/piteau
+edit_uri: ""
+
+theme:
+  name: 'material'
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - codehilite
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - Usage:
+      - usage/install.md
+      - usage/quickstart.md
+  - Reference:
+      Base Server: reference/base/server.md
+      Base Client: reference/base/client.md
+

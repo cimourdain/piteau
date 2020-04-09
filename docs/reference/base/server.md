@@ -1,0 +1,3 @@
+# Base Server
+
+::: piteau.BaseServer

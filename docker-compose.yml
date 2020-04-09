@@ -1,0 +1,26 @@
+version: "2.1"
+
+services:
+  piteau:
+    build:
+      context: .
+    volumes:
+     - ${PWD}:/piteau
+  piteau-py36:
+    extends:
+      service: piteau
+    build:
+      args:
+        image_name: "3.6.10-stretch"
+  piteau-py37:
+    extends:
+      service: piteau
+    build:
+      args:
+        image_name: "3.7.6-stretch"
+  piteau-py38:
+    extends:
+      service: piteau
+    build:
+      args:
+        image_name: "3.8.2-buster"

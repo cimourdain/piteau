@@ -1,0 +1,4 @@
+# Base Client
+
+::: piteau.BaseClient
+

@@ -1,0 +1,32 @@
+__pycache__
+
+#### virtualenv
+venv/*
+.venv/*
+
+#### IDE
+.idea
+
+#### tmp files
+/test_*
+old/*
+
+#### build
+*egg-info/
+dist/*
+
+#### doc
+/docs/_build
+site/
+build/*
+_build/*
+
+### pytest
+htmlcov/*
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+
+

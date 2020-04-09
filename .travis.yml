@@ -1,0 +1,16 @@
+language: python
+
+env:
+  - PYVERSION=py36
+  - PYVERSION=py37
+  - PYVERSION=py38
+
+services:
+  - docker
+before_install:
+  - curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose
+  - chmod +x ./docker-compose
+  - sudo mv docker-compose /usr/local/bin
+# command to install dependencies
+script:
+  - make ci
