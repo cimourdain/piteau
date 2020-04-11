@@ -80,12 +80,16 @@ class BaseClient:
 
     async def receive_messages(self) -> None:
         """
-        Listen and print messages received from server.
+        Listen messages one by one received from server.
+
+        For each message, this method decodes the received json and send it to
+        the `self.on_new_message()`
         """
         while True:
             if not self.reader:
                 raise ConnectionAbortedError('No socket reader')
-            data = await self.reader.read(100)
+            # message received one by one because server add \n after every message
+            data = await self.reader.readline()
             if not data:
                 logger.warning('Empty message received from server')
                 raise ConnectionAbortedError('Empty message received from server')

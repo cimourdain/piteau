@@ -51,7 +51,9 @@ class BaseServer:
 
         """
         logger.debug('Dispatch from %s to all: "%s"' % (from_client_id, message,))
-        message = json.dumps({'from': from_client_id, 'message': message})
+        # add \n after message to allow client to use readline (ie read received
+        # message one by one)
+        message = json.dumps({'from': from_client_id, 'message': message}) + '\n'
         for client_id, client in self.clients.items():
             logger.debug('Send message to %s: "%s"' % (client_id, message,))
             await self.send_message(
