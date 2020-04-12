@@ -21,7 +21,7 @@ init-local:
 
 style-check-local: init-local
 	poetry run flake8 $(PROJECT_FOLDER)
-	poetry run black $(PROJECT_FOLDER) -S --check --diff
+	poetry run black $(PROJECT_FOLDER) --check --diff
 	poetry run mypy $(PROJECT_FOLDER) --disallow-untyped-defs  --disallow-incomplete-defs --ignore-missing-imports
 	poetry run isort -rc $(PROJECT_FOLDER) --diff
 

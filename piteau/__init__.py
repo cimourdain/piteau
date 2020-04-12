@@ -7,6 +7,6 @@ logging.basicConfig(level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 __all__ = [
-    'BaseClient',
-    'BaseServer',
+    "BaseClient",
+    "BaseServer",
 ]

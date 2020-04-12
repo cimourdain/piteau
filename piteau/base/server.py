@@ -25,7 +25,7 @@ class BaseServer:
         ```
     """
 
-    def __init__(self, host: str = 'localhost', port: int = 1234,) -> None:
+    def __init__(self, host: str = "localhost", port: int = 1234,) -> None:
         self.host: str = host
         self.port: int = port
         self.clients: Dict[str, Any] = {}
@@ -38,8 +38,8 @@ class BaseServer:
             message: message to send
             client_id: client id to send the message to (see `BaseServer.on_new_client`)
         """
-        self.clients[client_id]['writer'].write(message.encode('utf8'))
-        await self.clients[client_id]['writer'].drain()
+        self.clients[client_id]["writer"].write(message.encode("utf8"))
+        await self.clients[client_id]["writer"].drain()
 
     async def on_new_message(self, from_client_id: str, message: str) -> None:
         """
@@ -53,7 +53,7 @@ class BaseServer:
         logger.debug('Dispatch from %s to all: "%s"' % (from_client_id, message,))
         # add \n after message to allow client to use readline (ie read received
         # message one by one)
-        message = json.dumps({'from': from_client_id, 'message': message}) + '\n'
+        message = json.dumps({"from": from_client_id, "message": message}) + "\n"
         for client_id, client in self.clients.items():
             logger.debug('Send message to %s: "%s"' % (client_id, message,))
             await self.send_message(
@@ -72,7 +72,7 @@ class BaseServer:
 
         """
         client_id = str(uuid.uuid4())[:4]
-        self.clients[client_id] = {'writer': client_writer}
+        self.clients[client_id] = {"writer": client_writer}
         return client_id
 
     async def on_new_client(
@@ -97,18 +97,18 @@ class BaseServer:
             if the client send `:q` as a message, it will be disconnected.
 
         """
-        logger.debug('New client connected.')
+        logger.debug("New client connected.")
         client_id = self.register_client(client_writer=client_writer)
         while True:
             new_message = (await client_reader.read(255)).decode()
-            logger.debug('New message received: %s' % new_message)
-            if not new_message or new_message == ':q':
-                logger.info('Disconnect client %s' % client_id)
+            logger.debug("New message received: %s" % new_message)
+            if not new_message or new_message == ":q":
+                logger.info("Disconnect client %s" % client_id)
                 break
             await self.on_new_message(from_client_id=client_id, message=new_message)
         client_writer.close()
         del self.clients[client_id]
-        logger.info('Nb connected clients: %s' % len(self.clients.keys()))
+        logger.info("Nb connected clients: %s" % len(self.clients.keys()))
 
     def run(self) -> None:
         """
@@ -127,14 +127,14 @@ class BaseServer:
             )
             loop.run_forever()
         except KeyboardInterrupt:
-            logger.warning('Server closed manually')
+            logger.warning("Server closed manually")
         finally:
-            logger.info('Close connection to all clients')
+            logger.info("Close connection to all clients")
             for client_id, client in self.clients.items():
-                client['writer'].close()
+                client["writer"].close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    server = BaseServer(host='localhost', port=1234)
+    server = BaseServer(host="localhost", port=1234)
     server.run()

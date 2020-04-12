@@ -46,7 +46,6 @@ flake8 = "^3.7.9"
 
 [tool.black]
 line-length = 88
-skip-string-normalization = true
 
 [tool.isort]
 line_length = 88

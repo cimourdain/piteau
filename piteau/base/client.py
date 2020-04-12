@@ -22,7 +22,7 @@ class BaseClient:
 
         ```python
             client = Client(
-                server_host='localhost',
+                server_host="localhost",
                 server_port=1234,
             )
             client.run()
@@ -32,7 +32,7 @@ class BaseClient:
     """
 
     def __init__(
-        self, server_host: str = 'localhost', server_port: int = 1234,
+        self, server_host: str = "localhost", server_port: int = 1234,
     ) -> None:
         self.server_host = server_host
         self.server_port = server_port
@@ -54,23 +54,23 @@ class BaseClient:
 
         """
         if not self.writer:
-            raise ConnectionAbortedError('Client has no active writer')
+            raise ConnectionAbortedError("Client has no active writer")
 
-        self.writer.write(message.encode('utf8'))
+        self.writer.write(message.encode("utf8"))
 
     async def wait_for_message(self) -> None:
         """
         Listen for user input and send input to server.
         """
-        logger.debug('wait for user input')
+        logger.debug("wait for user input")
         while True:
-            message = await ainput('>>>')
+            message = await ainput(">>>")
             if message:
-                if message == ':q':
+                if message == ":q":
                     self.send_message(message)
                     break
                 else:
-                    logger.debug('send %s to server' % message)
+                    logger.debug("send %s to server" % message)
                     self.send_message(message)
 
     async def on_new_message(self, data: Dict[str, Any]) -> None:
@@ -81,7 +81,7 @@ class BaseClient:
         Arguments:
             data: dictionary containing `from` (=sender id) and `message` keys
         """
-        print(f'<<< {data["from"]} > {data["message"]}')
+        print(f"<<< {data['from']} > {data['message']}")
 
     async def receive_messages(self) -> None:
         """
@@ -101,18 +101,18 @@ class BaseClient:
         """
         while True:
             if not self.reader:
-                raise ConnectionAbortedError('No socket reader')
+                raise ConnectionAbortedError("No socket reader")
             # message received one by one because server add \n after every message
             data = await self.reader.readline()
             if not data:
-                logger.warning('Empty message received from server')
-                raise ConnectionAbortedError('Empty message received from server')
-            logger.debug('Message received from server %s' % data.decode())
+                logger.warning("Empty message received from server")
+                raise ConnectionAbortedError("Empty message received from server")
+            logger.debug("Message received from server %s" % data.decode())
             asyncio.ensure_future(self.on_new_message(data=json.loads(data.decode())))
 
     def close(self) -> None:
         """Close sever connection and interrupt client."""
-        logger.info('Close client writer')
+        logger.info("Close client writer")
         if self.writer:
             self.writer.close()
 
@@ -124,13 +124,13 @@ class BaseClient:
             ConnectionRefusedError: if connection to server failed
 
         """
-        logger.debug('Register the open socket to wait for data')
+        logger.debug("Register the open socket to wait for data")
         try:
             self.reader, self.writer = await asyncio.open_connection(
                 host=self.server_host, port=self.server_port,
             )
         except OSError:
-            raise ConnectionRefusedError('Impossible to find server')
+            raise ConnectionRefusedError("Impossible to find server")
 
     def run(self) -> None:
         """
@@ -144,19 +144,19 @@ class BaseClient:
             self.loop.run_forever()
 
         except KeyboardInterrupt:
-            logger.warning('Client closed manually by user')
+            logger.warning("Client closed manually by user")
         # exceptions raised by tasks are handled in handle_exception
         except Exception as e:
-            logger.error('Uncatched exception %s' % e)
+            logger.error("Uncatched exception %s" % e)
         finally:
-            logger.info('Close client')
+            logger.info("Close client")
             self.close()
-            logger.debug('Close loop')
+            logger.debug("Close loop")
             self.loop.close()
 
 
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
-    client = BaseClient(server_host='localhost', server_port=1234)
+    client = BaseClient(server_host="localhost", server_port=1234)
     client.run()
