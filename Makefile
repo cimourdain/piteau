@@ -1,6 +1,7 @@
 PYVERSION ?= py36
 
 PROJECT_FOLDER = piteau/
+TESTS_FOLDER = tests/
 DOCKER_RUN = docker-compose run --rm piteau-$(PYVERSION)
 
 shell:
@@ -19,6 +20,9 @@ ci:
 init-local:
 	poetry install
 
+test-local: init-local
+	poetry run pytest $(TESTS_FOLDER) -x
+
 style-check-local: init-local
 	poetry run flake8 $(PROJECT_FOLDER)
 	poetry run black $(PROJECT_FOLDER) --check --diff
@@ -33,4 +37,4 @@ style-fix-local: init-local
 	poetry run black $(PROJECT_FOLDER)
 	poetry run isort -rc $(PROJECT_FOLDER)
 
-ci-local: style-check-local docs-local
+ci-local: test-local style-check-local docs-local
