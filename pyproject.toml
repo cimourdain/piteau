@@ -43,6 +43,7 @@ mkdocs-material = ">=4.6.3,<5"
 pygments = "==2.5.2"
 mkdocstrings = "==0.8"
 flake8 = "^3.7.9"
+pytest = "^5.4.1"
 
 [tool.black]
 line-length = 88
