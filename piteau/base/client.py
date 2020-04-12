@@ -36,9 +36,14 @@ class BaseClient:
     ) -> None:
         self.server_host = server_host
         self.server_port = server_port
+
+        # init event loop
+        self.loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+        self.loop.set_exception_handler(handle_exception)
+
+        # init writer and reader
         self.writer: Optional[asyncio.streams.StreamWriter] = None
         self.reader: Optional[asyncio.streams.StreamReader] = None
-        self.loop: Optional[asyncio.AbstractEventLoop] = None
 
     def send_message(self, message: str) -> None:
         """
@@ -68,7 +73,7 @@ class BaseClient:
                     logger.debug('send %s to server' % message)
                     self.send_message(message)
 
-    def on_new_message(self, data: Dict[str, Any]) -> None:
+    async def on_new_message(self, data: Dict[str, Any]) -> None:
         """
         Handle a new message received by server.
         This method simply prints it with a `<<<` prefix.
@@ -82,8 +87,17 @@ class BaseClient:
         """
         Listen messages one by one received from server.
 
-        For each message, this method decodes the received json and send it to
-        the `self.on_new_message()`
+        !!! note
+            after decoding, messages received are json with the following format:
+            ```json
+                {
+                    "from": str, // sender id
+                    "message": str, // message
+                }
+            ```
+
+        For each message, this method decodes the received json and "fire and forget"
+        a task with `self.on_new_message()` method.
         """
         while True:
             if not self.reader:
@@ -94,7 +108,7 @@ class BaseClient:
                 logger.warning('Empty message received from server')
                 raise ConnectionAbortedError('Empty message received from server')
             logger.debug('Message received from server %s' % data.decode())
-            self.on_new_message(data=json.loads(data.decode()))
+            asyncio.ensure_future(self.on_new_message(data=json.loads(data.decode())))
 
     def close(self) -> None:
         """Close sever connection and interrupt client."""
@@ -123,13 +137,11 @@ class BaseClient:
         Run client by starting an event loop that listen to user input and
         server messages.
         """
-        loop = asyncio.get_event_loop()
-        loop.set_exception_handler(handle_exception)
         try:
-            loop.run_until_complete(self.start())
-            loop.create_task(self.wait_for_message())
-            loop.create_task(self.receive_messages())
-            loop.run_forever()
+            self.loop.run_until_complete(self.start())
+            self.loop.create_task(self.wait_for_message())
+            self.loop.create_task(self.receive_messages())
+            self.loop.run_forever()
 
         except KeyboardInterrupt:
             logger.warning('Client closed manually by user')
@@ -140,7 +152,7 @@ class BaseClient:
             logger.info('Close client')
             self.close()
             logger.debug('Close loop')
-            loop.close()
+            self.loop.close()
 
 
 if __name__ == "__main__":
