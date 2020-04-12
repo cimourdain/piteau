@@ -25,7 +25,7 @@ Piteau: Asynchronous Chat
     :alt: static-typing : mypy
 
 
-**Piteau** is an asynchronous chat application written in python for education purposes.
+**Piteau** is an asynchronous socket based chat application written in python for education purposes.
 
 Features
 ========
