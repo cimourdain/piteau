@@ -24,10 +24,6 @@ Piteau: Asynchronous Chat
     :target: https://github.com/python/mypy
     :alt: static-typing : mypy
 
-.. image:: https://badgen.net/github/license/cimourdain/piteau
-    :target: https://opensource.org/licenses/MIT
-    :alt: Under MIT licence
-
 
 **Piteau** is an asynchronous chat application written in python for education purposes.
 
