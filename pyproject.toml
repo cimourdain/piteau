@@ -44,6 +44,7 @@ pygments = "==2.5.2"
 mkdocstrings = "==0.8"
 flake8 = "^3.7.9"
 pytest = "^5.4.1"
+pytest-mock = "^3.0.0"
 
 [tool.black]
 line-length = 88
