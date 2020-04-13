@@ -13,7 +13,7 @@ class AskTimeBot(BaseClient):
     when a client send a message stating with "/time"
     """
 
-    def on_new_message(self, data: Dict[str, Any]) -> None:
+    async def on_new_message(self, data: Dict[str, Any]) -> None:
         if data["message"].startswith("/time"):
             self.send_message(f"{datetime.utcnow().isoformat()}")
 
