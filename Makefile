@@ -13,6 +13,9 @@ style:
 docs:
 	$(DOCKER_RUN) make docs-local
 
+test:
+	$(DOCKER_RUN) make test-local
+
 ci:
 	$(DOCKER_RUN) make ci-local
 
