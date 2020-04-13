@@ -21,5 +21,5 @@ class AskTimeBot(BaseClient):
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
-    bot = AskTimeBot(server_host="localhost", server_port=1234)
+    bot = AskTimeBot(server_host="0.0.0.0", server_port=1234)
     bot.run()
