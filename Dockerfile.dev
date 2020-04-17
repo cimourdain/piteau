@@ -6,4 +6,7 @@ RUN apt-get install -y tmux
 RUN mkdir /piteau
 WORKDIR /piteau
 
-RUN pip install piteau
+RUN pip install poetry
+ADD poetry.lock poetry.lock
+ADD pyproject.toml pyproject.toml
+RUN poetry install $poetry_install_args

@@ -6,21 +6,54 @@ services:
       context: .
     volumes:
      - ${PWD}:/piteau
-  piteau-py36:
+  py36:
     extends:
       service: piteau
+    container_name: piteau-py36
     build:
+      dockerfile: Dockerfile
       args:
         image_name: "3.6.10-stretch"
-  piteau-py37:
+        poetry_install_args: "--no-dev"
+  py36-dev:
+    extends:
+      service: py36
+    container_name: piteau-py36-dev
+    build:
+      dockerfile: Dockerfile.dev
+      args:
+        poetry_install_args: ""
+  py37:
     extends:
       service: piteau
+    container_name: piteau-py37
     build:
+      dockerfile: Dockerfile
       args:
         image_name: "3.7.6-stretch"
-  piteau-py38:
+        poetry_install_args: "--no-dev"
+  py37-dev:
+    extends:
+      service: py37
+    container_name: piteau-py37-dev
+    build:
+      dockerfile: Dockerfile.dev
+      args:
+        poetry_install_args: ""
+  py38:
     extends:
       service: piteau
+    container_name: piteau-py38
     build:
+      dockerfile: Dockerfile
       args:
         image_name: "3.8.2-buster"
+        poetry_install_args: "--no-dev"
+  py38-dev:
+    extends:
+      service: py38
+    container_name: piteau-py38-dev
+    build:
+      dockerfile: Dockerfile.dev
+      args:
+        poetry_install_args: ""

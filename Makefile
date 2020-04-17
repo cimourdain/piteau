@@ -2,42 +2,45 @@ PYVERSION ?= py36
 
 PROJECT_FOLDER = piteau/
 TESTS_FOLDER = tests/
-DOCKER_RUN = docker-compose run --rm piteau-$(PYVERSION)
+SAMPLES_FOLDER = samples/
 
-shell:
-	$(DOCKER_RUN) bash
+STYLE_FOLDERS = $(PROJECT_FOLDER) $(TESTS_FOLDER) $(SAMPLES_FOLDER)
 
-style:
-	$(DOCKER_RUN) make style-local
+DOCKER_IMG_NAME = $(PYVERSION)
+DOCKER_IMG_NAME_DEV = $(PYVERSION)-dev
 
-docs:
-	$(DOCKER_RUN) make docs-local
+DOCKER_RUN = docker-compose run --rm $(DOCKER_IMG_NAME)
+DOCKER_RUN_DEV = docker-compose run --rm $(DOCKER_IMG_NAME_DEV) poetry run
+
+deinit:
+	docker system prune
+
+init:
+	docker-compose build --no-cache $(DOCKER_IMG_NAME)
+
+run:
+	$(DOCKER_RUN) sh scripts/run.sh "PYTHONPATH=. python"
+
+init-dev:
+	docker-compose build --no-cache $(DOCKER_IMG_NAME_DEV)
 
 test:
-	$(DOCKER_RUN) make test-local
+	$(DOCKER_RUN_DEV) pytest $(TESTS_FOLDER)
 
-ci:
-	$(DOCKER_RUN) make ci-local
+style:
+	$(DOCKER_RUN_DEV) poetry run flake8 $(STYLE_FOLDERS)
+	$(DOCKER_RUN_DEV) poetry run black $(STYLE_FOLDERS) --check --diff
+	$(DOCKER_RUN_DEV) poetry run mypy $(PROJECT_FOLDER) --disallow-untyped-defs  --disallow-incomplete-defs --ignore-missing-imports
+	$(DOCKER_RUN_DEV) poetry run isort -rc $(STYLE_FOLDERS) --diff
+
+black:
+	$(DOCKER_RUN_DEV) poetry run black $(STYLE_FOLDERS)
+
+isort:
+	$(DOCKER_RUN_DEV) poetry run isort -rc $(STYLE_FOLDERS)
 
 
-init-local:
-	poetry install
+docs:
+	$(DOCKER_RUN) poetry run mkdocs build --clean
 
-test-local: init-local
-	poetry run pytest $(TESTS_FOLDER) -x
-
-style-check-local: init-local
-	poetry run flake8 $(PROJECT_FOLDER)
-	poetry run black $(PROJECT_FOLDER) --check --diff
-	poetry run mypy $(PROJECT_FOLDER) --disallow-untyped-defs  --disallow-incomplete-defs --ignore-missing-imports
-	poetry run isort -rc $(PROJECT_FOLDER) --diff
-
-docs-local: init-local
-	pip install -r docs/requirements.txt
-	poetry run mkdocs build --clean
-
-style-fix-local: init-local
-	poetry run black $(PROJECT_FOLDER)
-	poetry run isort -rc $(PROJECT_FOLDER)
-
-ci-local: test-local style-check-local docs-local
+ci: test style docs

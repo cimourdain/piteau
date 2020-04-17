@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PYTHON_CMD="PYTHONPATH=. poetry run python"
+PYTHON_CMD=${1}
 # Session Name
 session="chat"
 
@@ -26,13 +26,13 @@ start_chat() {
 	# start server
 	tmux select-pane -t 1
 	tmux send-keys "${PYTHON_CMD} samples/base_server.py" C-m
-	sleep .5
+	sleep 1
 
 	# start bot client
 	tmux select-pane -t 2
 	rm -f bot.log
 	tmux send-keys "${PYTHON_CMD} samples/base_bot_client.py" C-m
-	sleep .5
+	sleep 1
 
 	# start client
 	tmux select-pane -t 0
